@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
 
-// ==================== SAME 5 FUNCTIONS ====================
+// ==================== 5 FUNCTIONS ====================
 bool validateEmail(String email) {
   const pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
   return email.isNotEmpty && RegExp(pattern).hasMatch(email);
@@ -19,29 +19,23 @@ String capitalizeFirstLetter(String input) =>
     input.isEmpty ? input : input[0].toUpperCase() + input.substring(1);
 
 bool isEvenNumber(int number) => number % 2 == 0;
-// ==================== FUNCTIONS END ====================
+// ==================== END ====================
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AI Utility Suite - Interactive',
+      title: 'AI Utility Suite',
       theme: ThemeData(
         brightness: Brightness.light,
         primarySwatch: Colors.indigo,
-        cardTheme: const CardThemeData(
-          elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
-        ),
+        useMaterial3: true,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.indigo,
-        cardTheme: const CardThemeData(
-          elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
-        ),
+        useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
       home: const InteractiveDemoPage(),
@@ -56,14 +50,12 @@ class InteractiveDemoPage extends StatefulWidget {
 }
 
 class _InteractiveDemoPageState extends State<InteractiveDemoPage> {
-  // Controllers for input fields
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController stringController = TextEditingController();
   final TextEditingController capitalizeController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
 
-  // Results
   String emailResult = '';
   String phoneResult = '';
   String reverseResult = '';
@@ -73,7 +65,6 @@ class _InteractiveDemoPageState extends State<InteractiveDemoPage> {
   @override
   void initState() {
     super.initState();
-    // Add listeners for real-time updates
     emailController.addListener(() => setState(() => emailResult = validateEmail(emailController.text).toString()));
     phoneController.addListener(() => setState(() => phoneResult = validatePhoneNumber(phoneController.text).toString()));
     stringController.addListener(() => setState(() => reverseResult = reverseString(stringController.text)));
@@ -82,7 +73,7 @@ class _InteractiveDemoPageState extends State<InteractiveDemoPage> {
       int? num = int.tryParse(numberController.text);
       evenResult = num != null ? (isEvenNumber(num) ? 'Even' : 'Odd') : 'Enter number';
     }));
-    // Set initial values
+    // Initial values
     emailController.text = 'test@example.com';
     phoneController.text = '123-456-7890';
     stringController.text = 'hello';
@@ -112,7 +103,6 @@ class _InteractiveDemoPageState extends State<InteractiveDemoPage> {
         padding: const EdgeInsets.all(20),
         child: ListView(
           children: [
-            // Email Validator
             _buildInteractiveCard(
               icon: Icons.email,
               title: 'Email Validator',
@@ -120,7 +110,6 @@ class _InteractiveDemoPageState extends State<InteractiveDemoPage> {
               result: emailResult,
               hint: 'Enter email address',
             ),
-            // Phone Validator
             _buildInteractiveCard(
               icon: Icons.phone,
               title: 'Phone Validator',
@@ -128,32 +117,26 @@ class _InteractiveDemoPageState extends State<InteractiveDemoPage> {
               result: phoneResult,
               hint: 'Enter phone number (10 digits)',
             ),
-            // String Reverser
             _buildInteractiveCard(
               icon: Icons.text_fields,
               title: 'String Reverser',
               controller: stringController,
               result: reverseResult,
               hint: 'Enter any string',
-              isBooleanResult: false,
             ),
-            // Capitalize
             _buildInteractiveCard(
               icon: Icons.format_size,
               title: 'Capitalize First Letter',
               controller: capitalizeController,
               result: capitalizeResult,
               hint: 'Enter any string',
-              isBooleanResult: false,
             ),
-            // Even Number Check
             _buildInteractiveCard(
               icon: Icons.numbers,
               title: 'Even Number Check',
               controller: numberController,
               result: evenResult,
               hint: 'Enter a number',
-              isBooleanResult: false,
             ),
             const SizedBox(height: 20),
             Container(
@@ -164,7 +147,7 @@ class _InteractiveDemoPageState extends State<InteractiveDemoPage> {
               ),
               child: const Center(
                 child: Text(
-                  ' Type anything above - results update in real time!',
+                  '✅ Type anything above - results update in real time!',
                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
@@ -182,7 +165,6 @@ class _InteractiveDemoPageState extends State<InteractiveDemoPage> {
     required TextEditingController controller,
     required String result,
     required String hint,
-    bool isBooleanResult = true,
   }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -214,18 +196,18 @@ class _InteractiveDemoPageState extends State<InteractiveDemoPage> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isBooleanResult
-                        ? (result == 'true' ? Colors.green.shade100 : Colors.red.shade100)
-                        : Colors.blue.shade50,
+                    color: title == 'Even Number Check'
+                        ? (result == 'Even' ? Colors.green.shade100 : Colors.red.shade100)
+                        : (result == 'true' ? Colors.green.shade100 : Colors.red.shade100),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     result.isEmpty ? ' ' : result,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: isBooleanResult
-                          ? (result == 'true' ? Colors.green.shade800 : Colors.red.shade800)
-                          : Colors.blue.shade800,
+                      color: title == 'Even Number Check'
+                          ? (result == 'Even' ? Colors.green.shade800 : Colors.red.shade800)
+                          : (result == 'true' ? Colors.green.shade800 : Colors.red.shade800),
                     ),
                   ),
                 ),
