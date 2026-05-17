@@ -1,0 +1,7 @@
+1. Code generation prompt: "Flutter mein 5 utility functions likho: validateEmail (regex), validatePhoneNumber (10 digits), reverseString, capitalizeFirstLetter, isEvenNumber. UI banao jo results dikhaye. Sab ek main.dart mein."
+
+2. Refactor prompt: "validateEmail function ko refactor karo: manual checking ki jagah regex use karo, readability aur performance improve karo."
+
+3. Unit tests prompt: "Flutter unit tests likho for 5 functions. Cover normal, edge, invalid cases. Use flutter_test."
+
+4. CI/CD prompt: "GitHub Actions workflow for Flutter web: run tests, build web with --base-href=/flutter_ai/ --web-renderer html, deploy to GitHub Pages using peaceiris/actions-gh-pages."
