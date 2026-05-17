@@ -2,65 +2,235 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
 
-// 1. Refactored email validator (AI ne regex diya)
+// ==================== SAME 5 FUNCTIONS ====================
 bool validateEmail(String email) {
   const pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
-  final regex = RegExp(pattern);
-  return email.isNotEmpty && regex.hasMatch(email);
+  return email.isNotEmpty && RegExp(pattern).hasMatch(email);
 }
 
-// 2. Phone validator
 bool validatePhoneNumber(String phone) {
   final digitsOnly = phone.replaceAll(RegExp(r'\D'), '');
   return digitsOnly.length == 10;
 }
 
-// 3. Reverse string
-String reverseString(String input) {
-  return input.split('').reversed.join('');
-}
+String reverseString(String input) => input.split('').reversed.join('');
 
-// 4. Capitalize first letter
-String capitalizeFirstLetter(String input) {
-  if (input.isEmpty) return input;
-  return input[0].toUpperCase() + input.substring(1);
-}
+String capitalizeFirstLetter(String input) =>
+    input.isEmpty ? input : input[0].toUpperCase() + input.substring(1);
 
-// 5. Even number check
-bool isEvenNumber(int number) {
-  return number % 2 == 0;
-}
+bool isEvenNumber(int number) => number % 2 == 0;
+// ==================== FUNCTIONS END ====================
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AI Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const DemoPage(),
+      title: 'AI Utility Suite - Interactive',
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primarySwatch: Colors.indigo,
+        cardTheme: const CardThemeData(
+          elevation: 4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+        ),
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.indigo,
+        cardTheme: const CardThemeData(
+          elevation: 4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+        ),
+      ),
+      themeMode: ThemeMode.system,
+      home: const InteractiveDemoPage(),
     );
   }
 }
 
-class DemoPage extends StatelessWidget {
-  const DemoPage({super.key});
+class InteractiveDemoPage extends StatefulWidget {
+  const InteractiveDemoPage({super.key});
+  @override
+  State<InteractiveDemoPage> createState() => _InteractiveDemoPageState();
+}
+
+class _InteractiveDemoPageState extends State<InteractiveDemoPage> {
+  // Controllers for input fields
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController stringController = TextEditingController();
+  final TextEditingController capitalizeController = TextEditingController();
+  final TextEditingController numberController = TextEditingController();
+
+  // Results
+  String emailResult = '';
+  String phoneResult = '';
+  String reverseResult = '';
+  String capitalizeResult = '';
+  String evenResult = '';
+
+  @override
+  void initState() {
+    super.initState();
+    // Add listeners for real-time updates
+    emailController.addListener(() => setState(() => emailResult = validateEmail(emailController.text).toString()));
+    phoneController.addListener(() => setState(() => phoneResult = validatePhoneNumber(phoneController.text).toString()));
+    stringController.addListener(() => setState(() => reverseResult = reverseString(stringController.text)));
+    capitalizeController.addListener(() => setState(() => capitalizeResult = capitalizeFirstLetter(capitalizeController.text)));
+    numberController.addListener(() => setState(() {
+      int? num = int.tryParse(numberController.text);
+      evenResult = num != null ? (isEvenNumber(num) ? 'Even' : 'Odd') : 'Enter number';
+    }));
+    // Set initial values
+    emailController.text = 'test@example.com';
+    phoneController.text = '123-456-7890';
+    stringController.text = 'hello';
+    capitalizeController.text = 'flutter';
+    numberController.text = '4';
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    phoneController.dispose();
+    stringController.dispose();
+    capitalizeController.dispose();
+    numberController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('AI Functions Demo')),
+      appBar: AppBar(
+        title: const Text('AI Utility Suite - Interactive', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        elevation: 2,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20),
+        child: ListView(
+          children: [
+            // Email Validator
+            _buildInteractiveCard(
+              icon: Icons.email,
+              title: 'Email Validator',
+              controller: emailController,
+              result: emailResult,
+              hint: 'Enter email address',
+            ),
+            // Phone Validator
+            _buildInteractiveCard(
+              icon: Icons.phone,
+              title: 'Phone Validator',
+              controller: phoneController,
+              result: phoneResult,
+              hint: 'Enter phone number (10 digits)',
+            ),
+            // String Reverser
+            _buildInteractiveCard(
+              icon: Icons.text_fields,
+              title: 'String Reverser',
+              controller: stringController,
+              result: reverseResult,
+              hint: 'Enter any string',
+              isBooleanResult: false,
+            ),
+            // Capitalize
+            _buildInteractiveCard(
+              icon: Icons.format_size,
+              title: 'Capitalize First Letter',
+              controller: capitalizeController,
+              result: capitalizeResult,
+              hint: 'Enter any string',
+              isBooleanResult: false,
+            ),
+            // Even Number Check
+            _buildInteractiveCard(
+              icon: Icons.numbers,
+              title: 'Even Number Check',
+              controller: numberController,
+              result: evenResult,
+              hint: 'Enter a number',
+              isBooleanResult: false,
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [Colors.indigo.shade400, Colors.purple.shade400]),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Center(
+                child: Text(
+                  ' Type anything above - results update in real time!',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInteractiveCard({
+    required IconData icon,
+    required String title,
+    required TextEditingController controller,
+    required String result,
+    required String hint,
+    bool isBooleanResult = true,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('📧 Email "test@example.com" valid? ${validateEmail("test@example.com")}'),
-            Text('📞 Phone "123-456-7890" valid? ${validatePhoneNumber("123-456-7890")}'),
-            Text('🔄 Reverse "hello": ${reverseString("hello")}'),
-            Text('🔠 Capitalize "flutter": ${capitalizeFirstLetter("flutter")}'),
-            Text('🔢 Is 4 even? ${isEvenNumber(4)}'),
-            const SizedBox(height: 20),
-            const Text('✅ Sab functions sahi kaam kar rahe hain.', style: TextStyle(fontWeight: FontWeight.bold)),
+            Row(
+              children: [
+                Icon(icon, size: 28, color: Theme.of(context).primaryColor),
+                const SizedBox(width: 12),
+                Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: hint,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Text('Result: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isBooleanResult
+                        ? (result == 'true' ? Colors.green.shade100 : Colors.red.shade100)
+                        : Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    result.isEmpty ? ' ' : result,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isBooleanResult
+                          ? (result == 'true' ? Colors.green.shade800 : Colors.red.shade800)
+                          : Colors.blue.shade800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
